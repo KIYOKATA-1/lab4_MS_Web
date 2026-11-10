@@ -4,3 +4,6 @@ export { LocationIcon } from "./locationIcon";
 export { RefreshIcon } from "./refreshIcon";
 export { SearchIcon } from "./searchIcon";
 export { StarIcon } from "./starIcon";
+export { AirIcon } from "./airIcon";
+export { WeatherIcon } from "./weatherIcon";
+export { HumidityIcon } from "./humidityIcon";

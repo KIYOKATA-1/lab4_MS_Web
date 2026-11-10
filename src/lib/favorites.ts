@@ -17,7 +17,7 @@ export function parseFavorites(stored: string): SelectedCity[] {
         const city = parseSelectedCity(value);
         cities.set(cityKey(city), city);
       } catch {
-        // A damaged entry should not hide the remaining saved cities.
+        continue;
       }
     }
     return [...cities.values()];

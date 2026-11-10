@@ -24,13 +24,21 @@ export function text(value: unknown): string | null {
   return value.trim() || null;
 }
 
-export function numeric(value: unknown, min = -Infinity, max = Infinity): number | null {
+export function numeric(
+  value: unknown,
+  min = -Infinity,
+  max = Infinity,
+): number | null {
   if (value === null || value === undefined) return null;
   if (typeof value !== "number") throw new InvalidResponseError();
   return Number.isFinite(value) && value >= min && value <= max ? value : null;
 }
 
-export function requiredNumber(value: unknown, min = -Infinity, max = Infinity): number {
+export function requiredNumber(
+  value: unknown,
+  min = -Infinity,
+  max = Infinity,
+): number {
   const number = numeric(value, min, max);
   if (number === null) throw new InvalidResponseError();
   return number;
@@ -53,8 +61,14 @@ export function timestamps(value: unknown): number[] {
   return value.map((entry) => requiredNumber(entry, 0));
 }
 
-export function series(value: unknown, length: number, min = -Infinity): (number | null)[] {
-  if (value === null || value === undefined) return Array.from({ length }, () => null);
-  if (!Array.isArray(value) || value.length !== length) throw new InvalidResponseError();
+export function series(
+  value: unknown,
+  length: number,
+  min = -Infinity,
+): (number | null)[] {
+  if (value === null || value === undefined)
+    return Array.from({ length }, () => null);
+  if (!Array.isArray(value) || value.length !== length)
+    throw new InvalidResponseError();
   return value.map((entry) => numeric(entry, min));
 }

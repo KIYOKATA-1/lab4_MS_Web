@@ -121,7 +121,9 @@
   background: var(--color-surface);
   line-height: 1;
   white-space: nowrap;
-  transition: background-color 150ms ease, border-color 150ms ease;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
 
   &:focus-visible {
     outline-color: var(--purple);

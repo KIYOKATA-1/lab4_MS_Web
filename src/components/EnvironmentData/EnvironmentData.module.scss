@@ -1,29 +1,341 @@
-.output {
+.overview {
+  margin-top: 32px;
+}
+
+.heading {
+  margin-bottom: 24px;
+  color: var(--color-accent);
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0.5px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr);
+  gap: 26px;
+}
+
+.card {
+  min-width: 0;
+  min-height: 380px;
+  padding: 26px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 28px;
+  margin-bottom: 18px;
+
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 20px;
+    font-weight: 400;
+  }
+
+  svg {
+    color: var(--color-accent);
+  }
+}
+
+.airCard,
+.band {
+  &[data-tone="good"] { --aqi-color: #1e855b; --aqi-ink: #176b4b; --aqi-soft: #e8f4ec; }
+  &[data-tone="moderate"] { --aqi-color: #d5aa2d; --aqi-ink: #785b0c; --aqi-soft: #faf3dc; }
+  &[data-tone="sensitive"] { --aqi-color: #dd8131; --aqi-ink: #98480e; --aqi-soft: #fdf0e3; }
+  &[data-tone="unhealthy"] { --aqi-color: #bd484d; --aqi-ink: #a12b32; --aqi-soft: #fbe9eb; }
+  &[data-tone="veryUnhealthy"] { --aqi-color: #84517d; --aqi-ink: #74416d; --aqi-soft: #f4eaf3; }
+  &[data-tone="hazardous"] { --aqi-color: #71384b; --aqi-ink: #71384b; --aqi-soft: #f6e7ec; }
+}
+
+.airReading {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.eyebrow {
+  color: var(--color-secondary);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.aqiValue {
+  color: var(--aqi-ink, var(--color-secondary));
+  font-size: 80px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -2px;
+  font-variant-numeric: tabular-nums;
+}
+
+.airSummary {
+  padding-top: 8px;
+  color: var(--color-secondary);
+  font-size: 14px;
+
+  p {
+    margin-top: 8px;
+  }
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  color: var(--aqi-ink);
+  background: var(--aqi-soft);
+  font-size: 14px;
+}
+
+.scale {
   margin-top: 24px;
+}
 
-  section + section,
-  footer {
-    margin-top: 24px;
-  }
+.markerTrack {
+  position: relative;
+  height: 26px;
+}
 
-  h2 {
-    margin-bottom: 8px;
-    font-size: 18px;
-  }
+.marker {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transform: translateX(-50%);
+  color: var(--aqi-ink);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+}
 
-  pre {
-    max-width: 100%;
+.triangle {
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 10px solid currentColor;
+}
+
+.bands {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.band {
+  min-width: 0;
+  text-align: center;
+}
+
+.bandColor {
+  display: block;
+  height: 13px;
+  border-radius: 4px;
+  background: var(--aqi-color);
+}
+
+.bandLabel {
+  display: block;
+  margin-top: 8px;
+  color: var(--color-secondary);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.scaleNote {
+  margin-top: 8px;
+  color: var(--color-secondary);
+  font-size: 12px;
+}
+
+.sample {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-secondary);
+  font-size: 12px;
+}
+
+.weatherReading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  margin-top: 16px;
+}
+
+.temperature {
+  color: var(--color-accent);
+  font-size: 64px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -2px;
+  font-variant-numeric: tabular-nums;
+}
+
+.conditions {
+  flex: 1;
+  min-width: 130px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.feelsLike {
+  margin-top: 4px;
+  color: var(--color-secondary);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.weatherDetails {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 26px;
+
+  dt {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-secondary);
     font-size: 14px;
-    white-space: pre-wrap;
+
+    svg {
+      color: var(--color-accent);
+    }
+  }
+
+  dd {
+    margin-top: 6px;
+    font-size: 24px;
+    font-weight: 600;
     overflow-wrap: anywhere;
   }
+}
 
-  button {
-    margin-block: 8px;
+.info {
+  position: relative;
+  flex-shrink: 0;
+
+  summary {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    color: var(--color-secondary);
+    cursor: pointer;
+    list-style: none;
+    font-size: 19px;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+  }
+}
+
+.infoContent {
+  position: absolute;
+  top: 36px;
+  right: 0;
+  z-index: 1;
+  width: min(300px, 65vw);
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  box-shadow: 0 8px 24px rgb(23 43 36 / 12%);
+  font-size: 13px;
+
+  p + p,
+  a {
+    display: block;
+    margin-top: 8px;
   }
 
-  footer {
-    color: var(--color-secondary);
-    font-size: 12px;
+  a {
+    color: var(--color-accent);
+  }
+}
+
+.sourceStatus {
+  margin-top: 16px;
+  color: var(--color-error);
+  font-size: 13px;
+
+  button {
+    margin-top: 8px;
+    padding: 6px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    color: var(--color-accent);
+    background: var(--color-surface);
+
+    &:disabled {
+      cursor: wait;
+      opacity: 0.6;
+    }
+  }
+}
+
+
+@media (max-width: 1100px) {
+  .cards {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .card {
+    padding: 22px;
+  }
+}
+
+@media (max-width: 850px) {
+  .cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .card {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 450px) {
+  .card {
+    padding: 18px;
+  }
+
+  .airReading {
+    gap: 16px;
+  }
+
+  .aqiValue {
+    font-size: 64px;
+  }
+
+  .bands {
+    gap: 3px;
+  }
+
+  .bandLabel {
+    font-size: 10px;
+    letter-spacing: -0.4px;
+  }
+
+  .temperature {
+    font-size: 56px;
   }
 }

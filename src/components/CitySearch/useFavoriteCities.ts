@@ -1,7 +1,11 @@
 "use client";
 
 import { useMemo, useState, useSyncExternalStore } from "react";
-import { cityKey, FAVORITES_STORAGE_KEY, parseFavorites } from "@/lib/favorites";
+import {
+  cityKey,
+  FAVORITES_STORAGE_KEY,
+  parseFavorites,
+} from "@/lib/favorites";
 import type { SelectedCity } from "@/services/environment/environment.types";
 
 const CHANGE_EVENT = "eco-monitor:favorites-change";
@@ -26,32 +30,42 @@ function getSnapshot() {
   }
 }
 
-// Keep the server render and first hydration render identical.
 const getServerSnapshot = () => "";
 
 export function useFavoriteCities() {
-  const stored = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const stored = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
   const favorites = useMemo(() => parseFavorites(stored), [stored]);
   const [error, setError] = useState("");
 
   function update(city: SelectedCity, removeOnly: boolean) {
     try {
-      const current = parseFavorites(window.localStorage.getItem(FAVORITES_STORAGE_KEY) ?? "[]");
+      const current = parseFavorites(
+        window.localStorage.getItem(FAVORITES_STORAGE_KEY) ?? "[]",
+      );
       const key = cityKey(city);
       const exists = current.some((entry) => cityKey(entry) === key);
-      const next = removeOnly || exists
-        ? current.filter((entry) => cityKey(entry) !== key)
-        : [...current, city];
+      const next =
+        removeOnly || exists
+          ? current.filter((entry) => cityKey(entry) !== key)
+          : [...current, city];
       window.localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(next));
       window.dispatchEvent(new Event(CHANGE_EVENT));
       setError("");
     } catch {
-      setError("Could not save favorites. Allow local storage in your browser and try again.");
+      setError(
+        "Could not save favorites. Allow local storage in your browser and try again.",
+      );
     }
   }
 
   return {
-    favorites, error, ready: stored !== "",
+    favorites,
+    error,
+    ready: stored !== "",
     toggleFavorite: (city: SelectedCity) => update(city, false),
     removeFavorite: (city: SelectedCity) => update(city, true),
   };

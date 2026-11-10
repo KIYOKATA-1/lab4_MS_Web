@@ -137,8 +137,8 @@ test("WMO descriptions and icons distinguish day/night, precipitation and missin
 test("Unix seconds format in the city's timezone without applying the offset twice", () => {
   const { formatTimestamp } = loadSource("src/lib/environment.ts");
   const timestamp = Date.UTC(2026, 0, 1) / 1000;
-  assert.match(formatTimestamp(timestamp, "Asia/Almaty"), /05:00:00/);
-  assert.match(formatTimestamp(timestamp, "Europe/Berlin"), /01:00:00/);
+  assert.match(formatTimestamp(timestamp, "Asia/Almaty"), /01 Jan 2026, 05:00 UTC\+5/);
+  assert.match(formatTimestamp(timestamp, "Europe/Berlin"), /01 Jan 2026, 01:00 UTC\+1/);
   assert.equal(formatTimestamp(null, "Asia/Almaty"), "—");
 });
 
@@ -159,17 +159,46 @@ test("Refresh retains only same-city failed readings and their original receipt 
   assert.equal(mergeEnvironment(previous, next).weather.data, null);
 });
 
-test("Text output preserves zero and null values and shows independent source times", async () => {
+test("Overview cards preserve zero and missing readings and show independent observation times", async () => {
   const mock = fixtureFetch();
   const { GET } = loadSource("src/app/api/cities/route.ts", mock.fetchImpl);
   const data = await (await GET(request())).json();
   const { EnvironmentData } = loadSource("src/components/EnvironmentData/EnvironmentData.tsx");
   const html = renderToStaticMarkup(createElement(EnvironmentData, { data, busy: false, refresh() {} }));
-  assert.ok(html.includes("&quot;temperature&quot;: 0"));
-  assert.ok(html.includes("&quot;feelsLike&quot;: null"));
+  assert.ok(html.includes("Environmental overview"));
+  assert.ok(html.includes("0°C"));
+  assert.ok(html.includes("Feels like —"));
+  assert.ok(html.includes("0%"));
+  assert.ok(html.includes("0 km/h"));
   assert.ok(html.includes("Good"));
-  assert.ok(html.includes("Weather data time"));
-  assert.ok(html.includes("Air quality data time"));
-  assert.ok(!html.includes("Sample"));
-  assert.ok(!html.includes("<svg"));
+  assert.ok(html.includes("US AQI 0, Good"));
+  assert.ok(html.includes('dateTime="1970-01-01T00:16:40.000Z"'));
+  assert.ok(html.includes('dateTime="1970-01-01T00:33:20.000Z"'));
+  assert.ok(!html.includes("<pre"));
+});
+
+test("AQI marker follows equal category bands and clamps readings beyond 500", () => {
+  const { getUsAqiPosition } = loadSource("src/lib/environment.ts");
+  for (const [value, expected] of [[0, 0], [25, 100 / 12], [50, 100 / 6], [100, 100 / 3], [150, 50], [200, 200 / 3], [300, 500 / 6], [400, 550 / 6], [500, 100], [600, 100]]) {
+    assert.ok(Math.abs(getUsAqiPosition(value) - expected) < 0.00001, `AQI ${value}`);
+  }
+  for (const value of [null, -1, NaN, Infinity]) assert.equal(getUsAqiPosition(value), null);
+});
+
+test("Overview handles missing sources and stale readings without displaying a Good badge", async () => {
+  const mock = fixtureFetch();
+  const { GET } = loadSource("src/app/api/cities/route.ts", mock.fetchImpl);
+  const data = await (await GET(request())).json();
+  const { EnvironmentData } = loadSource("src/components/EnvironmentData/EnvironmentData.tsx");
+  data.airQuality = { status: "empty", data: null, fetchedAt: null, error: "No air readings" };
+  data.weather.status = "error";
+  data.weather.error = "Weather refresh timed out";
+  const html = renderToStaticMarkup(createElement(EnvironmentData, { data, busy: true, refresh() {} }));
+  assert.ok(html.includes("Air quality reading unavailable"));
+  assert.ok(html.includes("Time unavailable"));
+  assert.ok(!html.includes(">Good<"));
+  assert.ok(html.includes("0°C"));
+  assert.ok(html.includes("Showing the last available data"));
+  assert.ok(html.includes("Weather refresh timed out"));
+  assert.ok(html.includes('disabled=""'));
 });

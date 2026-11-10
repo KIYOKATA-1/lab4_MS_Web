@@ -7,7 +7,6 @@ import ts from "typescript";
 const require = createRequire(import.meta.url);
 const root = path.resolve(import.meta.dirname, "../..");
 
-// Execute the actual TypeScript modules with isolated HTTP mocks and no new test dependency.
 export function loadSource(entry, fetchImpl = fetch) {
   const cache = new Map();
   const context = vm.createContext({
