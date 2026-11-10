@@ -151,6 +151,11 @@
   color: var(--purple-bright);
   border-color: var(--purple-bright);
 
+  &:hover:not(:disabled),
+  &[aria-pressed="true"] {
+    background: var(--purple-soft);
+  }
+
   &:disabled {
     cursor: not-allowed;
     opacity: 0.65;
@@ -165,9 +170,34 @@
   font-size: 18px;
   font-weight: 600;
 
-  &:hover {
+  &:hover:not(:disabled) {
     border-color: #5b21b6;
     background: #5b21b6;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+  }
+
+  &[aria-busy="true"] {
+    cursor: wait;
+  }
+}
+
+.spinning {
+  animation: spin 800ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinning {
+    animation: none;
   }
 }
 
@@ -186,37 +216,89 @@
   text-transform: uppercase;
 }
 
+.favoritesHint {
+  color: var(--color-secondary);
+  font-size: 14px;
+}
+
+.favoriteCity {
+  display: inline-flex;
+  align-items: stretch;
+  max-width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+}
+
+.favoriteSelect,
+.favoriteRemove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border: 0;
+  color: var(--purple);
+  background: transparent;
+
+  &:hover:not(:disabled) {
+    background: var(--purple-soft);
+  }
+
+  &:focus-visible {
+    outline-color: var(--purple);
+  }
+}
+
+.favoriteSelect {
+  gap: 8px;
+  min-width: 0;
+  padding: 8px 12px;
+  border-radius: 11px 0 0 11px;
+  text-align: left;
+
+  span {
+    overflow-wrap: anywhere;
+  }
+
+  &[aria-pressed="true"] {
+    background: var(--purple-soft);
+  }
+
+  &:disabled {
+    cursor: wait;
+    opacity: 0.65;
+  }
+}
+
+.favoriteRemove {
+  flex-shrink: 0;
+  width: 44px;
+  padding: 0;
+  border-left: 1px solid var(--color-border);
+  border-radius: 0 11px 11px 0;
+}
+
 .error {
   margin-top: 12px;
   color: var(--color-error);
   font-size: 14px;
+
+  button {
+    margin-top: 10px;
+    padding: 8px 14px;
+    border: 1px solid var(--purple);
+    border-radius: 8px;
+    color: var(--purple);
+    background: white;
+  }
 }
 
-.status,
-.results {
+.status {
   margin-top: 20px;
 }
 
-.status,
-.source {
+.status {
   color: var(--color-secondary);
-}
-
-.results pre {
-  max-width: 100%;
-  margin: 12px 0;
-  font-family: monospace;
-  font-size: 14px;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-
-.source {
-  font-size: 14px;
-
-  a {
-    color: inherit;
-  }
 }
 
 @media (max-width: 1200px) {

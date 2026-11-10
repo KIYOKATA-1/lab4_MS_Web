@@ -1,10 +1,12 @@
 import "server-only";
 
 import type { GeocodingResponse } from "./geocoding.types";
+import { fetchJson } from "@/services/http/fetch-json";
+import { parseGeocoding } from "./geocoding.parsers";
 
 const searchEndpoint = "https://geocoding-api.open-meteo.com/v1/search";
 
-export async function searchCities(name: string, countryCode?: string): Promise<GeocodingResponse> {
+export async function searchCities(name: string, countryCode?: string, signal?: AbortSignal): Promise<GeocodingResponse> {
   const url = new URL(searchEndpoint);
   url.search = new URLSearchParams({
     name: name.trim(),
@@ -17,14 +19,5 @@ export async function searchCities(name: string, countryCode?: string): Promise<
     url.searchParams.set("countryCode", countryCode.toUpperCase());
   }
 
-  const response = await fetch(url, {
-    cache: "no-store",
-    signal: AbortSignal.timeout(10000),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Open-Meteo geocoding failed with status ${response.status}.`);
-  }
-
-  return response.json();
+  return parseGeocoding(await fetchJson(url, "City search", signal));
 }
